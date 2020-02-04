@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.eatza.order.dto.ItemFetchDto;
 
-@FeignClient("restaurant-ws")
-@RequestMapping("/item/id/")
+@FeignClient("restaurantsearchservice")
+@RequestMapping("/item")
 public interface OrderFeignClient {
 	
-	@GetMapping("/{id}")
-	ItemFetchDto placeOrder(@PathVariable("id") Long id);
+	@GetMapping(value="/id/{itemId}")
+	ItemFetchDto placeOrder(@PathVariable("itemId") long itemId);
 	
 	
 

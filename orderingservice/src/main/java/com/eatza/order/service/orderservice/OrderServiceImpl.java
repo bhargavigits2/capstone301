@@ -39,8 +39,10 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	ItemService itemService;
 
-	@Value("${restaurant.search.item.url}")
-	private String restaurantServiceItemUrl;
+	/*
+	 * @Value("${restaurant.search.item.url}") private String
+	 * restaurantServiceItemUrl;
+	 */
 
 	
 	 @Autowired RestTemplate restTemplate;
@@ -61,10 +63,10 @@ public class OrderServiceImpl implements OrderService {
 		logger.debug("Getting all ordered items to persist");
 		List<OrderedItemsDto> itemsDtoList = orderRequest.getItems();
 		for(OrderedItemsDto itemDto: itemsDtoList) {
-			MappingJackson2HttpMessageConverter map = new MappingJackson2HttpMessageConverter();
-			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-			messageConverters.add(map);
-			messageConverters.add(new FormHttpMessageConverter());
+			//MappingJackson2HttpMessageConverter map = new MappingJackson2HttpMessageConverter();
+			//List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+			//messageConverters.add(map);
+			//messageConverters.add(new FormHttpMessageConverter());
 			//restTemplate.setMessageConverters(messageConverters);
 			try {
 				logger.debug("Calling restaurant search service to get item details");
@@ -161,10 +163,12 @@ public class OrderServiceImpl implements OrderService {
 		List<OrderedItem> updateItemsListToReturn = new ArrayList<>();
 		for(OrderedItemsDto itemDto: itemsDtoList) {
 			MappingJackson2HttpMessageConverter map = new MappingJackson2HttpMessageConverter();
-			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-			messageConverters.add(map);
-			messageConverters.add(new FormHttpMessageConverter());
-			restTemplate.setMessageConverters(messageConverters);
+			/*
+			 * List<HttpMessageConverter<?>> messageConverters = new
+			 * ArrayList<HttpMessageConverter<?>>(); messageConverters.add(map);
+			 * messageConverters.add(new FormHttpMessageConverter());
+			 * restTemplate.setMessageConverters(messageConverters);
+			 */
 			try {
 				//ItemFetchDto item = restTemplate.getForObject(restaurantServiceItemUrl+itemDto.getItemId(), ItemFetchDto.class);
 				ItemFetchDto item = orderFeignClient.placeOrder(itemDto.getItemId());
