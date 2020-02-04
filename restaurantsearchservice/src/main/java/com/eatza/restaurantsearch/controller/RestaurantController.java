@@ -35,10 +35,6 @@ public class RestaurantController {
 	private static final String RESTAURANT_BAD_REQUEST_MSG="Page number or Page size cannot be 0 or less";
 	private static final String RESTAURANT_NOT_FOUND_MSG="No Restaurants found for specified inputs";
 
-	@GetMapping("/status/check")
-	public String status() {
-		return "working";
-	}
 	
 	@GetMapping("/restaurants")
 	public ResponseEntity<RestaurantResponseDto> getAllRestaurants(@RequestHeader(required=false) String authorization,@RequestParam(defaultValue="1") int pagenumber,@RequestParam(defaultValue="10") int pagesize) {
