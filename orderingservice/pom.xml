@@ -95,7 +95,6 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
 		</dependency>
-	
 	</dependencies>
 
 	<build>

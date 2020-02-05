@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eatza.order.dto.OrderRequestDto;
 import com.eatza.order.dto.OrderUpdateDto;
 import com.eatza.order.dto.OrderUpdateResponseDto;
 import com.eatza.order.exception.OrderException;
+import com.eatza.order.kafka.KafkaSender;
+import com.eatza.order.model.Message;
 import com.eatza.order.model.Order;
-import com.eatza.order.service.orderservice.KafkaSender;
 import com.eatza.order.service.orderservice.OrderService;
 
 @RestController
@@ -31,7 +31,7 @@ public class OrderController {
 	OrderService orderService;
 	
 	@Autowired
-	KafkaSender kafkaSender;
+	private KafkaSender messageSender;	
 
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 	
@@ -45,6 +45,8 @@ public class OrderController {
 				.body(order);
 
 	}
+	
+	
 	@PutMapping("/order/cancel/{orderId}")
 	public ResponseEntity<String> cancel(@RequestHeader String authorization, @PathVariable Long orderId) throws OrderException{
 		logger.debug("In cancel order method");
@@ -106,11 +108,13 @@ public class OrderController {
 			throw new OrderException("No result found for specified inputs");
 		}	
 	}
-
-	@GetMapping(value = "/producer")
-	public ResponseEntity<String> producer(@RequestParam("message") String message) {
-		kafkaSender.send(message);
-		return ResponseEntity.ok("Message received: " + message);
+	
+	@PostMapping(value = "/producer")
+	public ResponseEntity<Message> producer(@RequestBody Message message) {
+		messageSender.sendMessage(message);
+		return ResponseEntity
+		.status(HttpStatus.OK)
+		.body(message);
 	}
 
 

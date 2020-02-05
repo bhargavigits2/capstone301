@@ -17,10 +17,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import com.eatza.order.dto.ItemFetchDto;
@@ -31,6 +29,7 @@ import com.eatza.order.dto.OrderUpdateResponseDto;
 import com.eatza.order.dto.OrderedItemsDto;
 import com.eatza.order.dto.RestaurantFetchDto;
 import com.eatza.order.exception.OrderException;
+import com.eatza.order.feign.OrderFeignClient;
 import com.eatza.order.model.Order;
 import com.eatza.order.model.OrderedItem;
 import com.eatza.order.repository.OrderRepository;
@@ -52,6 +51,9 @@ public class OrderServiceTest {
 
 	@Mock
 	private RestTemplate restTemplate;
+	
+	@Mock
+	private OrderFeignClient orderFeignClient;
 
 
 
@@ -70,7 +72,7 @@ public class OrderServiceTest {
 		restaurant.setBudget(400);
 		restaurant.setRating(4.2);
 		restaurant.setCuisine("South Indian");
-		restaurant.setId(1L);
+		restaurant.setId(1l);
 		restaurant.setName("Vasudev");
 		restaurant.setLocation("RR Nagar");
 		
@@ -89,14 +91,15 @@ public class OrderServiceTest {
 
 		when(orderRepository.save(any(Order.class)))
 		.thenReturn(new Order(orderRequest.getCustomerId(), "CREATED", orderRequest.getRestaurantId()));
-
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
+		when(orderFeignClient.placeOrder(anyLong())).thenReturn(item);
 		when(itemService.saveItem(any(OrderedItem.class))).thenReturn(new OrderedItem());
 
 		Order order = orderService.placeOrder(orderRequest);
 		assertNotNull(order);
 
 	}
+
+	
 
 	@Test(expected=OrderException.class)
 	public void placeOrder_different_restaurant() throws OrderException {
@@ -116,8 +119,8 @@ public class OrderServiceTest {
 
 		when(orderRepository.save(any(Order.class)))
 		.thenReturn(new Order(orderRequest.getCustomerId(), "CREATED", orderRequest.getRestaurantId()));
-
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
+		when(orderFeignClient.placeOrder(anyLong())).thenReturn(item);
+		//when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
 		//		when(itemService.saveItem(any(OrderedItem.class))).thenReturn(new OrderedItem());
 
 		Order order = orderService.placeOrder(orderRequest);
@@ -143,7 +146,7 @@ public class OrderServiceTest {
 		when(orderRepository.save(any(Order.class)))
 		.thenReturn(new Order(orderRequest.getCustomerId(), "CREATED", orderRequest.getRestaurantId()));
 
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(null);
+		when(orderFeignClient.placeOrder(anyLong())).thenReturn(item);
 		//		when(itemService.saveItem(any(OrderedItem.class))).thenReturn(new OrderedItem());
 
 		Order order = orderService.placeOrder(orderRequest);
@@ -170,7 +173,7 @@ public class OrderServiceTest {
 		when(orderRepository.save(any(Order.class)))
 		.thenReturn(new Order(orderRequest.getCustomerId(), "CREATED", orderRequest.getRestaurantId()));
 
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
+		when(orderFeignClient.placeOrder(anyLong())).thenReturn(item);
 		//		when(itemService.saveItem(any(OrderedItem.class))).thenReturn(new OrderedItem());
 		Order order = orderService.placeOrder(orderRequest);
 		assertNotNull(order);
@@ -288,7 +291,7 @@ public class OrderServiceTest {
 		MenuFetchDto menu = new MenuFetchDto(1L, "10", "22", restaurant);
 		ItemFetchDto item = new ItemFetchDto(1L, "Onion Dosa", "Dosa", 110, menu);
 
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
+		when(orderFeignClient.placeOrder(anyLong())).thenReturn(item);
 		orderService.updateOrder(new OrderUpdateDto(1L, 1L, Arrays.asList(new OrderedItemsDto(1L, 1)), 1L));
 
 	}
@@ -305,7 +308,7 @@ public class OrderServiceTest {
 		MenuFetchDto menu = new MenuFetchDto(1L, "10", "22", restaurant);
 		ItemFetchDto item = new ItemFetchDto(1L, "Onion Dosa", "Dosa", 110, menu);
 
-		when(restTemplate.getForObject(any(String.class),any(Class.class))).thenReturn(item);
+		when(orderFeignClient.placeOrder(anyLong())).thenReturn(item);
 		when( itemService.saveItem(any(OrderedItem.class))).thenReturn(new OrderedItem("Onion Dosa", 1, 110, orderReturned, 1L));
 		when(orderRepository.save(any(Order.class))).thenReturn(orderReturned);
 	

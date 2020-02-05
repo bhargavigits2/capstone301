@@ -16,13 +16,5 @@ public class OrderingserviceApplication {
 		SpringApplication.run(OrderingserviceApplication.class, args);
 	}
 	
-	/*
-	 * @Bean public FilterRegistrationBean jwtFilterBean() { final
-	 * FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-	 * registrationBean.setFilter(new JwtFilter());
-	 * registrationBean.addUrlPatterns("/order/*");
-	 * 
-	 * return registrationBean; }
-	 */
 
 }

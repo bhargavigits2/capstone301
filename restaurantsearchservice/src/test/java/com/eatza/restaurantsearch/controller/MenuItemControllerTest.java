@@ -49,16 +49,8 @@ public class MenuItemControllerTest {
 	private ObjectMapper objectMapper;
 
 	
-	String jwt="";
+	
 	private static final long EXPIRATIONTIME = 900000;
-	@Before
-	public void setup() {
-		jwt = "Bearer "+Jwts.builder().setSubject("user").claim("roles", "user").setIssuedAt(new Date())
-				.signWith(SignatureAlgorithm.HS256, "secretkey").setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME)).compact();
-	}
-
-
-
 
 	@Test
 	public void addMenuItem() throws Exception {
@@ -72,9 +64,7 @@ public class MenuItemControllerTest {
 		RequestBuilder request = MockMvcRequestBuilders.post(
 				"/item")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString((requestDto)))
-				.header(HttpHeaders.AUTHORIZATION,
-						jwt);
+				.content(objectMapper.writeValueAsString((requestDto)));		
 		mockMvc.perform(request)
 		.andExpect(status().is(200))
 		.andExpect(content().string("Item Added successfully"))
@@ -88,9 +78,7 @@ public class MenuItemControllerTest {
 		RequestBuilder request = MockMvcRequestBuilders.get(
 				"/restaurant/item/name/rajma?pagenumber=1&pagesize=10")
 				.accept(
-						MediaType.ALL)
-				.header(HttpHeaders.AUTHORIZATION,
-						jwt);
+						MediaType.ALL);
 		mockMvc.perform(request)
 		.andExpect(status().is(200))
 		
@@ -106,9 +94,8 @@ public class MenuItemControllerTest {
 		RequestBuilder request = MockMvcRequestBuilders.get(
 				"/item/id/1?pagenumber=1&pagesize=10")
 				.accept(
-						MediaType.ALL)
-				.header(HttpHeaders.AUTHORIZATION,
-						jwt);
+						MediaType.ALL);
+				
 		mockMvc.perform(request)
 		.andExpect(status().is(200))
 		
@@ -119,11 +106,10 @@ public class MenuItemControllerTest {
 	public void getItemById_empty() throws Exception {
 		when(menuItemService.findById(anyLong())).thenReturn(Optional.empty());
 		RequestBuilder request = MockMvcRequestBuilders.get(
-				"/item/id/1?pagenumber=1&pagesize=10")
+				"/item/id/11?pagenumber=1&pagesize=10")
 				.accept(
-						MediaType.ALL)
-				.header(HttpHeaders.AUTHORIZATION,
-						jwt);
+						MediaType.ALL);
+				
 		mockMvc.perform(request)
 		.andExpect(status().is(404))
 		
